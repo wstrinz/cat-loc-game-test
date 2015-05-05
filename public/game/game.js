@@ -158,19 +158,19 @@ var catgame = {
     //var south = loc.coords.latitude - (heightDegrees / 2);
     //var east = loc.coords.longitude + (widthDegrees / 2);
     //var north = loc.coords.latitude + (heightDegrees / 2);
+    //stage.constants.projector = proj4('+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=' + leftLng + ' +x_0=0.0 +y_0=0 +k=1.0 +units=m +no_defs');
     stage.constants.projector = proj4('+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +no_defs');
 
-    var startingProj = stage.constants.projector.forward([loc.coords.latitude, loc.coords.longitude]);
+    var xm = (stage.constants.gameWindowWidth / 2) * stage.state.metersPerPixel;
+    var ym = (stage.constants.gameWindowHeight / 2) * stage.state.metersPerPixel;
+    var topLat = geotools.translateLatitude(loc.coords.latitude, loc.coords.longitude, ym)[0];
+    var leftLng = geotools.translateLongitude(loc.coords.latitude, loc.coords.longitude, -xm)[1];
+    var startingProj = stage.constants.projector.forward([topLat, leftLng]);
 
-    stage.constants.anchorOffsets = {
-      xPxoff: stage.constants.gameWindowWidth / 2,
-      yPxoff: stage.constants.gameWindowHeight / 2,
-      xMoff: startingProj[1] - (stage.constants.gameWindowWidth / 2) * stage.state.metersPerPixel,
-      yMoff: startingProj[0] + (stage.constants.gameWindowHeight / 2) * stage.state.metersPerPixel
-    };
+    stage.constants.xMoff = startingProj[0];
+    stage.constants.yMoff = startingProj[1];
 
-    var anchorPt = stage.constants.projector.inverse([stage.constants.anchorOffsets.xMoff, stage.constants.anchorOffsets.yMoff]);
-    stage.constants.geoAnchor = {lat: anchorPt[0], lng: anchorPt[1]};
+    stage.constants.geoAnchor = {lat: topLat, lng: leftLng};
     // stage.constants.geoAnchor = {lng: loc.coords.longitude - (stage.state.widthDegreesPerPixel * stage.constants.gameWindowWidth) / 2,
     //                              lat: loc.coords.latitude + (stage.state.heightDegreesPerPixel * stage.constants.gameWindowHeight) / 2};
     console.log(stage.constants.geoAnchor);

@@ -1,13 +1,26 @@
 var geoFunctions = {
   toGameCoords: function(loc, stage, relativeTo) {
-    var projected = stage.constants.projector.forward([loc.lat, loc.lng]);
-    var offsets = stage.constants.anchorOffsets;
-    var coords = {
-      x: projected[0] - offsets.xMoff - offsets.xPxoff,
-      y: projected[1] - offsets.yMoff - offsets.yPxoff
-    };
+    //var projected = stage.constants.projector.forward([loc.lat, loc.lng]);
+    //var coords = {
+      //x: projected[0] - stage.constants.xMoff,
+      //y: projected[1] + stage.constants.yMoff
+    //};
 
-    return coords;
+    //return coords;
+    var distFromAnchor = geotools.distance(loc.lat, loc.lng, stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng);
+    var c_loc = new jsts.geom.Coordinate(loc.lng, loc.lat);
+    var c_anchor = new jsts.geom.Coordinate(stage.constants.geoAnchor.lng, stage.constants.geoAnchor.lat);
+
+    var angle = jsts.algorithm.Angle.angleBetweenCoords(c_anchor, c_loc);
+    var y = -(Math.sin(angle) * distFromAnchor / stage.state.metersPerPixel);
+    var x = Math.cos(angle) * distFromAnchor / stage.state.metersPerPixel;
+
+     if(relativeTo){
+       y = y - relativeTo.position.y;
+       x = x - relativeTo.position.x;
+     }
+    return {y: y, x: x};
+
     // var hdpp = stage.state.heightDegreesPerPixel;
     // var wdpp = stage.state.widthDegreesPerPixel;
     // //var ppdlon = stage.constants.gameWindowWidth / wdpp;
@@ -23,7 +36,6 @@ var geoFunctions = {
     //   y = y - relativeTo.position.y;
     //   x = x - relativeTo.position.x;
     // }
-    // return {y: y, x: x};
   },
 
   toGeoCoords: function(entity, stage){
@@ -31,11 +43,14 @@ var geoFunctions = {
       entity = entity.toGlobal(stage);
     }
     var pos = {x: entity.x, y: entity.y};
-    var metersPerPx = stage.stage.metersPerPixel;
+    var metersPerPx = stage.state.metersPerPixel;
     //var bounds = stage.state.bounds;
 
-    var lat = stage.constants.geoAnchor.lat - (pos.y * stage.state.heightDegreesPerPixel);
-    var lng = stage.constants.geoAnchor.lng + (pos.x * stage.state.widthDegreesPerPixel);
+    var xDist = entity.x * metersPerPx;
+    var yDist = entity.y * metersPerPx;
+
+    var lat = geotools.translateLatitude(stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng, yDist)[0];
+    var lng = geotools.translateLongitude(stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng, xDist)[1];
     return {lat: lat, lng: lng};
   },
 
