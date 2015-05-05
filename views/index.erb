@@ -1,0 +1,77 @@
+<head>
+<script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
+<script src="proj4.js"></script>
+
+</head>
+
+<body>
+  <div id="timestamp">
+    <p>Last Reading</p>
+    <p class="value"></p>
+  </div>
+  <div id="acc">
+    <p>accuracy</p>
+    <p class="value"></p>
+  </div>
+  <div id="altitude">
+    <p>altitude</p>
+    <p class="value"></p>
+  </div>
+  <div id="alt-acc">
+    <p>altitude accuracy</p>
+    <p class="value"></p>
+  </div>
+  <div id="head">
+    <p>heading</p>
+    <p class="value"></p>
+  </div>
+  <div id="lat">
+    <p>lat</p>
+    <p class="value"></p>
+  </div>
+  <div id="lng">
+    <p>lng</p>
+    <p class="value"></p>
+  </div>
+  <div id="speed">
+    <p>speed</p>
+    <p class="value"></p>
+  </div>
+
+  <!-- accuracy: 60 -->
+  <!-- altitude: null -->
+  <!-- altitudeAccuracy: null -->
+  <!-- heading: null -->
+  <!-- latitude: 43.074594999999995 -->
+  <!-- longitude: -89.3805452 -->
+  <!-- speed: null -->
+
+
+  <script type="text/javascript">
+    logit = function(){ console.log(arguments) }
+    navigator.geolocation.getCurrentPosition(logit)
+    var setVal = function(id, txt){
+      if(txt === null || txt === undefined)
+        txt = "null"
+
+      $('div#' + id + '>p.value').text(txt)
+    }
+
+    var lastStamp = 0
+    navigator.geolocation.watchPosition(function(loc){
+      setVal('acc', loc.coords.accuracy) 
+      setVal('altitude', loc.coords.altitude) 
+      setVal('alt-acc', loc.coords.altitudeAccuracy) 
+      setVal('head', loc.coords.heading) 
+      setVal('speed', loc.coords.speed) 
+      setVal('lat', loc.coords.latitude) 
+      setVal('lng', loc.coords.longitude) 
+      lastStamp =  loc.timestamp
+      }, logit, {enableHighAccuracy: true});
+
+    setInterval(function(){
+      setVal('timestamp', moment(lastStamp).fromNow())
+    }, 1000)
+  </script>
+</body>

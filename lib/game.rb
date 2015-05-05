@@ -1,0 +1,6 @@
+require_relative 'dictionaries'
+require_relative 'game/concepts'
+require_relative 'game/interaction_generator'
+require_relative 'game/proc_gen'
+require_relative 'game/world_generator'
+require_relative 'game/user'
