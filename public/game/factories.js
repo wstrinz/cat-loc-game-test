@@ -764,6 +764,14 @@ var factories = {
       });
       graphics.endFill();
 
+      graphics.polyPoints = _.map(nodesToDisplay, function(n){
+        return [n.positionElement.position.x, n.positionElement.position.y];
+      });
+
+      graphics.geoPoints = _.map(nodesToDisplay, function(n){
+        return [n.lat, n.lng];
+      });
+
       graphics.updateLocalBounds();
 
       var b = graphics._localBounds;

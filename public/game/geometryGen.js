@@ -91,17 +91,22 @@ var geometryGen = {
   loadWays: function(stage, bounds, nodes) {
     $.get('/ways', {bounds: bounds}, function(resp) {
       stage.state.tilecount = resp.tileCount;
-      $.map(resp.ways, function(way) {
+      var skipped = $.map(resp.ways, function(way) {
         if(way.tags.highway){
           geometryGen.addRoad(way, nodes, stage, bounds);
         }
         else if (way.tags.building == "yes" || way.tags.building == "residential"){
           geometryGen.addBuilding(way, nodes, stage, bounds);
         }
-        else if (way.tags.leisure == "park") {
+        else if (geoFunctions.hasAreaTag(way)) {
           geometryGen.addArea(way, nodes, stage, bounds);
         }
+        else{
+          return way.tags;
+        }
       });
+
+      console.log(_.uniq(skipped));
 
       actions.updatePosition(stage, stage.state.bounds, geoFunctions.adjustedCoords(stage));
     });

@@ -7,12 +7,12 @@ var geoFunctions = {
     //};
 
     //return coords;
-    var sphereDistFromAnchor = geotools.distance(loc.lat, loc.lng, stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng);
+    //var sphereDistFromAnchor = geotools.distance(loc.lat, loc.lng, stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng);
     var p1 = new LatLon(loc.lat, loc.lng);
     var p2 = new LatLon(stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng);
     var distFromAnchor = p1.distanceTo(p2);
-    var c_loc = new jsts.geom.Coordinate(loc.lng, loc.lat);
-    var c_anchor = new jsts.geom.Coordinate(stage.constants.geoAnchor.lng, stage.constants.geoAnchor.lat);
+    //var c_loc = new jsts.geom.Coordinate(loc.lng, loc.lat);
+    //var c_anchor = new jsts.geom.Coordinate(stage.constants.geoAnchor.lng, stage.constants.geoAnchor.lat);
 
     var angle = jsts.algorithm.Angle.toRadians(p1.initialBearingTo(p2));
     angle -= Math.PI / 2;
@@ -135,6 +135,14 @@ var geoFunctions = {
             y: (dy / (height / 2)) * 100};
   },
 
+  hasAreaTag: function(way){
+    areaTags = {
+      natural: ['water'],
+      leisure: ['park', "pitch", "playground"]
+    };
+    //debugger;
+    return _.any(_.keys(way.tags), function(k){return _.includes(areaTags[k], way.tags[k]);});
+  },
   isOnstage: function(sprite) {
 
   },
