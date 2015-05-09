@@ -7,18 +7,22 @@ var geoFunctions = {
     //};
 
     //return coords;
-    var distFromAnchor = geotools.distance(loc.lat, loc.lng, stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng);
+    var sphereDistFromAnchor = geotools.distance(loc.lat, loc.lng, stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng);
+    var p1 = new LatLon(loc.lat, loc.lng);
+    var p2 = new LatLon(stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng);
+    var distFromAnchor = p1.distanceTo(p2);
     var c_loc = new jsts.geom.Coordinate(loc.lng, loc.lat);
     var c_anchor = new jsts.geom.Coordinate(stage.constants.geoAnchor.lng, stage.constants.geoAnchor.lat);
 
-    var angle = jsts.algorithm.Angle.angleBetweenCoords(c_anchor, c_loc);
+    var angle = jsts.algorithm.Angle.toRadians(p1.initialBearingTo(p2));
+    angle -= Math.PI / 2;
     var y = -(Math.sin(angle) * distFromAnchor / stage.state.metersPerPixel);
-    var x = Math.cos(angle) * distFromAnchor / stage.state.metersPerPixel;
+    var x = -(Math.cos(angle) * distFromAnchor / stage.state.metersPerPixel);
 
-     if(relativeTo){
-       y = y - relativeTo.position.y;
-       x = x - relativeTo.position.x;
-     }
+     //if(relativeTo){
+       //y = y - relativeTo.position.y;
+       //x = x - relativeTo.position.x;
+     //}
     return {y: y, x: x};
 
     // var hdpp = stage.state.heightDegreesPerPixel;
@@ -49,7 +53,7 @@ var geoFunctions = {
     var xDist = entity.x * metersPerPx;
     var yDist = entity.y * metersPerPx;
 
-    var lat = geotools.translateLatitude(stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng, yDist)[0];
+    var lat = geotools.translateLatitude(stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng, -yDist)[0];
     var lng = geotools.translateLongitude(stage.constants.geoAnchor.lat, stage.constants.geoAnchor.lng, xDist)[1];
     return {lat: lat, lng: lng};
   },

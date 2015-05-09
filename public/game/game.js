@@ -181,7 +181,8 @@ var catgame = {
     document.onkeydown = function(e){ gameInput.handleKey(e, stage, bounds); };
     stage.click = function(e){
       if(e.originalEvent.shiftKey){
-        var clickCoords = geoFunctions.toGeoCoords(e.global, stage);
+        var offsetCoords = {x: e.global.x - stage.camera.x, y: e.global.y - stage.camera.y};
+        var clickCoords = geoFunctions.toGeoCoords(offsetCoords, stage);
         var newCoords = {coords:
                           {latitude: clickCoords.lat,
                            longitude: clickCoords.lng},
