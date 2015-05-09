@@ -257,6 +257,11 @@ post '/game/init_enemy' do
   end
 end
 
+get '/reset_game' do
+  REDIS_GEO.flushall
+  REDIS_GAME.flushall
+end
+
 get '/nodes' do
   content_type :json
   geo_data = get_geo_data(params[:bounds])
