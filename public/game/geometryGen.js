@@ -47,7 +47,7 @@ var geometryGen = {
     area.graphics.tap = area.graphics.click = function(evt){
       stage.entities.infoBox.showFn(way, evt.global, evt.target);
     };
-    stage.containers.otherAreaContainer.addChild(area.graphics);
+    geometryGen.helpers.containerForArea(stage, way).addChild(area.graphics);
   },
 
   loadNodes: function(stage, bounds, cb) {
@@ -106,10 +106,26 @@ var geometryGen = {
         }
       });
 
-      console.log(_.uniq(skipped));
+      console.log('skipped', _.uniq(skipped));
 
       actions.updatePosition(stage, stage.state.bounds, geoFunctions.adjustedCoords(stage));
     });
-  }
+  },
 
+  helpers: {
+    containerForArea: function(stage, way){
+      if(way.tags.leisure){
+        var lt = way.tags.leisure;
+        if(lt == "park"){
+          return stage.containers.otherAreaContainer;
+        }
+        else {
+          return stage.containers.buildingContainer;
+        }
+      }
+      else{
+        return stage.containers.otherAreaContainer;
+      }
+    },
+  }
 };

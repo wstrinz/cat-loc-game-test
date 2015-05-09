@@ -753,11 +753,12 @@ var factories = {
   otherArea: function(way, nodes, bounds){
     var nodesToDisplay = this.helpers.nodesForWay(way, nodes, {sort: true});
     var graphics = new PIXI.Graphics();
+    var color = factories.helpers.colorForArea(way);
 
     if(nodesToDisplay[0]){
       var firstPos = nodesToDisplay[0].positionElement.position;
       graphics.moveTo(firstPos.x,firstPos.y);
-      graphics.beginFill(0x308330);
+      graphics.beginFill(color);
       _.each(_.rest(nodesToDisplay), function(n) {
         var nPos = n.positionElement.position;
         graphics.lineTo(nPos.x,nPos.y);
@@ -842,6 +843,27 @@ var factories = {
       }
       else{
         return 0xE6B800;
+      }
+    },
+
+    colorForArea: function(way){
+      if(way.tags.leisure){
+        var lt = way.tags.leisure;
+        if(lt == "park"){
+          return 0x308330;
+        }
+        else {
+          return 0xF37735;
+        }
+      }
+      else if(way.tags.natural){
+        var nt = way.tags.natural;
+        if(nt == "water"){
+          return 0x007CD2;
+        }
+        else{
+          return 0xFFFFFF;
+        }
       }
     },
 
